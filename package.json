@@ -4,7 +4,7 @@
   "description": "A more complete Canada Post API library",
   "main": "lib/canadapost.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha ./test"
+    "test": "./node_modules/.bin/mocha --timeout 60000 ./test"
   },
   "keywords": [
     "canada",
@@ -14,6 +14,7 @@
     "canadapost"
   ],
   "author": "\"Kevin S\" <kevin@chilicode.ca>",
+  "repository": "https://github.com/t3rminus/canada-post.git",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.1",
