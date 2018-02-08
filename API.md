@@ -23,7 +23,7 @@ _All_ Candada Post API methods return a [Bluebird promise](https://github.com/pe
 ## CanadaPostClient
 The main class for working with the Canada Post API
 
-#####`new CanadaPostClient(userId, password, [customer, [lang]])` -> `CanadaPostClient`
+##### `new CanadaPostClient(userId, password, [customer, [lang]])` -> `CanadaPostClient`
 Creates a new instance of the CanadaPostClient class, that will authenticate requests with the provided username and password.
 
 Arguments:
@@ -44,7 +44,7 @@ Returns: `CanadaPostClient instance`
 
 ***
 
-#####`.discoverServices(originPostalCode, destinationCountry, [destinationPostalCode])` -> `Promise`
+##### `.discoverServices(originPostalCode, destinationCountry, [destinationPostalCode])` -> `Promise`
 Discovers available services for creating a shipment between the origin postal code, and destination.
 
 See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/rating/getrates/discoverservices.jsf
