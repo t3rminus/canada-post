@@ -16,8 +16,8 @@ _All_ Candada Post API methods return a [Bluebird promise](https://github.com/pe
 
 ## API
 - [CanadaPostClient](#CanadaPostClient)
-    - [`new CanadaPostClient(userId, password, [customer, [lang]])`](#new-canadapostclient-userid-password-customer-lang---canadapostclient)
-    - [`.discoverServices(originPostalCode, destinationCountry, [destinationPostalCode])` -> `Promise`](#discoverservices-originpostalcode-destinationcountry-destinationpostalcode---promise)
+    - [`new CanadaPostClient(userId, password, [customer, [lang]])`](#new-canadapostclientuserid-password-customer-lang---canadapostclient)
+    - [`.discoverServices(originPostalCode, destinationCountry, [destinationPostalCode])` -> `Promise`](#discoverservicesoriginpostalcode-destinationcountry-destinationpostalcode---promise)
     - *(additional documentation coming soon)*
     
 ## CanadaPostClient
