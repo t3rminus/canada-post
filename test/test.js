@@ -16,7 +16,7 @@ describe('Canada Post', function() {
 			chaiExpect(result.some(r => !/^DOM\./.test(r.serviceCode))).to.be.false;
 		});
 	});
-	
+
 	it('Discovers International Services (USA)', () => {
 		return cpc.discoverServices('V6G 3E2', 'US')
 		.then(result => {
@@ -27,7 +27,7 @@ describe('Canada Post', function() {
 			chaiExpect(result.some(r => !/^USA\./.test(r.serviceCode))).to.be.false;
 		});
 	});
-	
+
 	it('Discovers International Services (Australia) with Postal Code', function () {
 		return cpc.discoverServices('V6G 3E2', 'AU', '3000')
 		.then(result => {
@@ -38,7 +38,7 @@ describe('Canada Post', function() {
 			chaiExpect(result.some(r => !/^INT\./.test(r.serviceCode))).to.be.false;
 		});
 	});
-	
+
 	it('Gets Rates', () => {
 		const rateQuery = {
 			parcelCharacteristics: {
@@ -51,7 +51,7 @@ describe('Canada Post', function() {
 				}
 			}
 		};
-		
+
 		return cpc.getRates(rateQuery)
 			.then(result => {
 				chaiExpect(result).to.be.an('array');
@@ -60,7 +60,7 @@ describe('Canada Post', function() {
 				chaiExpect(aResult).to.contain.keys('priceDetails', 'serviceCode','serviceName','serviceStandard','weightDetails');
 			});
 	});
-	
+
 	it('Can create a non-contract shipment', () => {
 		const shipment = {
 			requestedShippingPoint: 'V5C2H2',
@@ -87,7 +87,13 @@ describe('Canada Post', function() {
 					}
 				},
 				parcelCharacteristics: {
-					weight: 1
+					weight: 1,
+					document: false,
+					dimensions: {
+						length: 23,
+						width: 18,
+						height: 10
+					}
 				},
 				preferences: {
 					showPackingInstructions: true,
@@ -99,7 +105,7 @@ describe('Canada Post', function() {
 				}
 			}
 		};
-		
+
 		return cpc.createNonContractShipment(shipment)
 		.then(result => {
 			chaiExpect(result).to.be.an('object');
@@ -107,7 +113,7 @@ describe('Canada Post', function() {
 			chaiExpect(result.links).to.contain.keys('label', 'self', 'details');
 		});
 	});
-	
+
 	it('Can get a tracking summary', () => {
 		return cpc.getTrackingSummary('1681334332936901')
 		.then(result => {
@@ -118,7 +124,7 @@ describe('Canada Post', function() {
 				'originPostalId', 'pin', 'returnPin', 'serviceName', 'signatoryName');
 		});
 	});
-	
+
 	it('Can get tracking detail', () => {
 		return cpc.getTrackingDetail('1371134583769923')
 		.then(result => {
@@ -128,12 +134,54 @@ describe('Canada Post', function() {
 				'destinationPostalId', 'expectedDeliveryDate', 'mailedByCustomerNumber',
 				'mailedOnBehalfOfCustomerNumber', 'originalPin', 'pin', 'returnPin', 'serviceName', 'serviceName2',
 				'signatureImageExists', 'significantEvents', 'suppressSignature');
-			
+
 			chaiExpect(result.significantEvents).to.be.an('array');
 			chaiExpect(result.significantEvents[0]).to.be.an('object');
 			chaiExpect(result.significantEvents[0]).to.contain.keys('eventDate', 'eventDescription',
 				'eventIdentifier', 'eventProvince', 'eventRetailLocationId', 'eventRetailName',
 				'eventSite', 'eventTime', 'eventTimeZone', 'signatoryName');
+		});
+	});
+
+	it('Can list shipments', () => {
+		const timestamp = Date.now();
+		return cpc.getShipments(timestamp - 115200000)
+		.then(result => {
+			chaiExpect(result).to.be.an('array');
+			chaiExpect(result).to.not.be.empty;
+			chaiExpect(result[0]).to.contain.keys('shipmentId', 'href', 'mediaType','rel');
+		});
+	});
+
+	it('Can get shipment links', () => {
+		const timestamp = Date.now();
+		return cpc.getShipments(timestamp - 115200000)
+		.then(result => {
+			chaiExpect(result).to.be.an('array');
+			chaiExpect(result).to.not.be.empty;
+
+			return cpc.getShipment(result[0].shipmentId)
+			.then((result) => {
+				chaiExpect(result).to.be.an('object');
+				chaiExpect(result).to.contain.keys('links', 'shipmentId', 'trackingPin');
+				chaiExpect(result.links).to.contain.keys('label', 'self', 'details');
+			});
+		});
+	});
+
+	it('Can get shipment details', () => {
+		const timestamp = Date.now();
+		return cpc.getShipments(timestamp - 115200000)
+		.then(result => {
+			chaiExpect(result).to.be.an('array');
+			chaiExpect(result).to.not.be.empty;
+
+			return cpc.getShipmentDetails(result[0].shipmentId)
+				.then((result) => {
+					chaiExpect(result).to.be.an('object');
+					chaiExpect(result.nonContractShipmentDetails).to.contain.keys('deliverySpec','finalShippingPoint','trackingPin');
+					chaiExpect(result.nonContractShipmentDetails.deliverySpec).to.contain.keys('destination','serviceCode','sender','parcelCharacteristics');
+				});
 		});
 	});
 });
