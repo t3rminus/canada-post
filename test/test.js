@@ -64,6 +64,29 @@ describe('Canada Post', function () {
 			});
 	});
 
+	it('Handles invalid postal codes', () => {
+		const rateQuery = {
+			parcelCharacteristics: {
+				weight: 1
+			},
+			originPostalCode: 'Z9Z9Z9',
+			destination: {
+				domestic: {
+					postalCode: 'POOT'
+				}
+			}
+		};
+
+		return cpc.getRates(rateQuery)
+			.then(() => {
+				expect.fail('Expected an invalid postal code to throw an error');
+			})
+			.catch(err => {
+				chaiExpect(err).to.exist;
+				chaiExpect(err).to.be.an.instanceof(CanadaPostClient.CanadaPostError);
+			})
+	});
+
 	it('Can create a non-contract shipment', () => {
 		const shipment = {
 			requestedShippingPoint: 'V5C2H2',

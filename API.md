@@ -59,3 +59,19 @@ Returns: `Promise`
 Resolves: `Array` - An array of services codes for shipping from the origin to the destination
 
 ***
+
+##### `.getRates(scenario)` -> `Promise`
+Gets the rates for a given mailing scenario.
+
+See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/rating/getrates/default.jsf
+
+Arguments:
+
+- `scenario` (Object) - An object that represents the mailing scenario. See [this page](https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/rating/getrates/default.jsf) for info. Common fields include the following:
+	- `parcelCharacteristics` (Object) - An object including fields for `weight` and `dimensions` (which includes `length`,`width`,`height`).
+	- `originPostalCode` (String) - The origin postal code, within Canada, that the item is being shipped from
+	- `destination` (Object) - An object with one of the following keys: `domestic` (which includes `postalCode`), `unitedStates` (which includes `zipCode`), or `international` (which includes )
+`countryCode`. An ISO2 country code)
+
+Returns: `Promise`
+Resolves: `Array` - An array of available services and their prices for shipping from the origin postal code to the destination
