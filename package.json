@@ -1,6 +1,6 @@
 {
 	"name": "canadapost-api",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A more complete Canada Post API library",
 	"main": "lib/canadapost.js",
 	"scripts": {
