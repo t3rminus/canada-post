@@ -210,4 +210,19 @@ describe('Canada Post', function () {
 					});
 			});
 	});
+
+	it('Can refund a shipment', () => {
+		const timestamp = Date.now();
+		return cpc.getShipments(timestamp - 115200000)
+			.then(result => {
+				chaiExpect(result).to.be.an('array');
+				chaiExpect(result).to.not.be.empty;
+
+				return cpc.refundNonContractShipment(result[0].shipmentId, 'test@example.com')
+					.then((result) => {
+						chaiExpect(result).to.be.an('object');
+						chaiExpect(result).to.contain.keys('serviceTicketId', 'serviceTicketDate');
+					});
+			});
+	});
 });
