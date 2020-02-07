@@ -1,31 +1,33 @@
 {
-	"name": "canadapost-api",
-	"version": "1.0.4",
-	"description": "A more complete Canada Post API library",
-	"main": "lib/canadapost.js",
-	"scripts": {
-		"test": "./node_modules/.bin/mocha --timeout 60000 ./test"
-	},
-	"keywords": [
-		"canada",
-		"post",
-		"canada",
-		"shipping",
-		"canadapost"
-	],
-	"author": "\"Kevin S\" <kevin@chilicode.ca>",
-	"repository": "https://github.com/t3rminus/canada-post.git",
-	"license": "MIT",
-	"dependencies": {
-		"lodash.camelcase": "^4.3.0",
-		"lodash.kebabcase": "^4.1.1",
-		"request": "^2.88.0",
-		"request-promise-native": "^1.0.7",
-		"xml2js": "^0.4.19"
-	},
-	"devDependencies": {
-		"chai": "^4.2.0",
-		"dotenv": "^7.0.0",
-		"mocha": "^6.0.2"
-	}
+  "name": "canadapost-api",
+  "version": "1.0.5",
+  "description": "A more complete Canada Post API library",
+  "main": "lib/canadapost.js",
+  "scripts": {
+    "lint": "semistandard",
+    "test": "npm run lint && ./node_modules/.bin/mocha --timeout 60000 ./test"
+  },
+  "keywords": [
+    "canada",
+    "post",
+    "canada",
+    "shipping",
+    "canadapost"
+  ],
+  "author": "\"Kevin S\" <kevin@chilicode.ca>",
+  "repository": "https://github.com/t3rminus/canada-post.git",
+  "license": "MIT",
+  "dependencies": {
+    "lodash.camelcase": "^4.3.0",
+    "lodash.kebabcase": "^4.1.1",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.8",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "dotenv": "^8.2.0",
+    "mocha": "^7.0.1",
+    "semistandard": "^14.2.0"
+  }
 }
