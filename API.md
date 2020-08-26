@@ -12,14 +12,14 @@ and it will be converted before being sent with the request.
 Result objects are somewhat normalized, to reduce the amount of unncessary XML information/structure that is generated.
 
 ## Promises
-_All_ Candada Post API methods return a [Bluebird promise](https://github.com/petkaantonov/bluebird).
+_All_ Candada Post API methods return a promise. Old-style callbacks are not supported.
 
 ## API
 - [CanadaPostClient](#CanadaPostClient)
     - [`new CanadaPostClient(userId, password, [customer, [lang]])`](#new-canadapostclientuserid-password-customer-lang---canadapostclient)
     - [`.discoverServices(originPostalCode, destinationCountry, [destinationPostalCode])` -> `Promise`](#discoverservicesoriginpostalcode-destinationcountry-destinationpostalcode---promise)
     - *(additional documentation coming soon)*
-    
+
 ## CanadaPostClient
 The main class for working with the Canada Post API
 
