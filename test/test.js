@@ -62,7 +62,7 @@ describe('Canada Post', function () {
         chaiExpect(result).to.not.be.empty; // eslint-disable-line no-unused-expressions
         const aResult = result[0];
         chaiExpect(aResult).to.contain.keys('priceDetails', 'serviceCode', 'serviceName', 'serviceStandard', 'weightDetails');
-        chaiExpect(aResult.priceDetails).to.contain.keys('base','due','taxes','options','adjustments');
+        chaiExpect(aResult.priceDetails).to.contain.keys('base', 'due', 'taxes', 'options', 'adjustments');
         chaiExpect(aResult.priceDetails.options).to.be.an('array');
         chaiExpect(aResult.priceDetails.adjustments).to.be.an('array');
         chaiExpect(aResult.priceDetails.taxes).to.be.an('object');
