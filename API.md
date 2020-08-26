@@ -136,7 +136,7 @@ Resolves: `Object` - An object representing the created shipment, with the shipm
 
 ***
 
-##### `.refundNonContractShipment(id, email) -> `Promise`
+##### `.refundNonContractShipment(id, email)` -> `Promise`
 Refunds a non-contract shipment
 
 See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/onestepshipping/shipmentrefund.jsf
