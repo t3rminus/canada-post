@@ -97,7 +97,7 @@ describe('Canada Post', function () {
       .then(result => {
         chaiExpect(result).to.be.an('array');
         chaiExpect(result).to.not.be.empty; // eslint-disable-line no-unused-expressions
-      })
+      });
   });
 
   it('Handles invalid postal codes', () => {
@@ -348,7 +348,7 @@ describe('Canada Post', function () {
         destination: {
           name: 'Larry David',
           addressDetails: {
-            addressLine1: "123 Fake street",
+            addressLine1: '123 Fake street',
             city: 'Denver',
             provState: 'CO',
             postalZipCode: '90210',
