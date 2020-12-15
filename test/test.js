@@ -69,6 +69,37 @@ describe('Canada Post', function () {
       });
   });
 
+  it('Returns the same results for discoverServices and getRates', () => {
+    const rateQuery = {
+      parcelCharacteristics: {
+        weight: 0.2,
+        dimensions: {
+          length: 23,
+          width: 23,
+          height: 15
+        }
+      },
+      originPostalCode: 'M9W7G6',
+      destination: {
+        domestic: {
+          postalCode: 'H7R4X4'
+        }
+      }
+    };
+
+    return cpc.discoverServices('M9W7G6', 'CA', 'H7R4X4')
+      .then(result => {
+        chaiExpect(result).to.be.an('array');
+        chaiExpect(result).to.not.be.empty; // eslint-disable-line no-unused-expressions
+
+        return cpc.getRates(rateQuery);
+      })
+      .then(result => {
+        chaiExpect(result).to.be.an('array');
+        chaiExpect(result).to.not.be.empty; // eslint-disable-line no-unused-expressions
+      })
+  });
+
   it('Handles invalid postal codes', () => {
     const rateQuery = {
       parcelCharacteristics: {
@@ -83,13 +114,21 @@ describe('Canada Post', function () {
     };
 
     return cpc.getRates(rateQuery)
-      .then(() => {
-        chaiExpect.fail('Expected an invalid postal code to throw an error');
-      })
-      .catch(err => {
-        chaiExpect(err).to.exist; // eslint-disable-line no-unused-expressions
-        chaiExpect(err).to.be.an.instanceof(CanadaPostClient.CanadaPostError);
-      });
+      .then(
+        () => {
+          chaiExpect.fail('Expected an invalid postal code to throw an error');
+        },
+        (err) => {
+          chaiExpect(err).to.exist; // eslint-disable-line no-unused-expressions
+          chaiExpect(err).to.be.an.instanceof(CanadaPostClient.CanadaPostError);
+          chaiExpect(err.message).to.be.a.string; // eslint-disable-line no-unused-expressions
+          chaiExpect(err.message).to.include('postal-code value \'POOT\' is not a valid instance of type');
+          chaiExpect(err.message).to.include('PostalCodeType');
+          chaiExpect(err.code).to.equal('Server');
+          chaiExpect(err.originalMessages).to.be.an('array');
+          chaiExpect(err.originalMessages.length).to.equal(1);
+        }
+      );
   });
 
   it('Can create a non-contract shipment', () => {
@@ -229,5 +268,130 @@ describe('Canada Post', function () {
             chaiExpect(result).to.contain.keys('serviceTicketId', 'serviceTicketDate');
           });
       });
+  });
+
+  it('Throws an error when there is a single request issue', () => {
+    const failShipment = {
+      requestedShippingPoint: 'M4X1P1',
+      deliverySpec: {
+        serviceCode: 'DOM.EP',
+        sender: {
+          company: 'Wes Bos',
+          contactPhone: '911',
+          addressDetails: {
+            addressLine1: '123 Fake St.',
+            city: 'Fake',
+            provState: 'ON',
+            postalZipCode: 'M4X1P1'
+          }
+        },
+        destination: {
+          name: 'Larry David',
+          addressDetails: {
+            addressLine1: '123 Fake St.',
+            city: 'Fake',
+            provState: 'ON',
+            postalZipCode: 'M4X1P1'
+          }
+        },
+        parcelCharacteristics: {
+          weight: 1,
+          document: false,
+          dimensions: {
+            length: 23,
+            width: 18,
+            height: 10
+          }
+        },
+        preferences: {
+          showPackingInstructions: true,
+          showPostageRate: false,
+          showInsuredValue: false
+        }
+      }
+    };
+
+    return cpc.createNonContractShipment(failShipment)
+      .then(
+        () => {
+          chaiExpect.fail('Canada Post request succeeded with invalid shipment information.');
+        },
+        (err) => {
+          chaiExpect(err).to.exist; // eslint-disable-line no-unused-expressions
+          chaiExpect(err).to.be.an.instanceof(CanadaPostClient.CanadaPostError);
+          chaiExpect(err.message).to.be.a.string; // eslint-disable-line no-unused-expressions
+          chaiExpect(err.message).to.not.include('\n');
+          chaiExpect(err.message).to.include('DestinationAddressDetailsType, required element');
+          chaiExpect(err.message).to.include('country-code is missing');
+          chaiExpect(err.code).to.equal('Server');
+          chaiExpect(err.originalMessages).to.be.an('array');
+          chaiExpect(err.originalMessages.length).to.equal(1);
+        }
+      );
+  });
+
+  it('Throws an error when there are multple request issues', () => {
+    const failShipment = {
+      requestedShippingPoint: 'M4X1P1',
+      deliverySpec: {
+        serviceCode: 'USA.XP',
+        sender: {
+          company: 'Wes Bos',
+          contactPhone: '911',
+          addressDetails: {
+            addressLine1: '123 fake street',
+            city: 'Fake',
+            provState: 'ON',
+            postalZipCode: 'M4X1P1'
+          }
+        },
+        destination: {
+          name: 'Larry David',
+          addressDetails: {
+            addressLine1: "123 Fake street",
+            city: 'Denver',
+            provState: 'CO',
+            postalZipCode: '90210',
+            countryCode: 'US'
+          }
+        },
+        parcelCharacteristics: {
+          weight: 1,
+          document: false,
+          dimensions: {
+            length: 23,
+            width: 18,
+            height: 10
+          }
+        },
+        preferences: {
+          showPackingInstructions: true,
+          showPostageRate: false,
+          showInsuredValue: false
+        }
+      }
+    };
+
+    return cpc.createNonContractShipment(failShipment)
+      .then(
+        () => {
+          chaiExpect.fail('Canada Post request succeeded with invalid shipment information.');
+        },
+        (err) => {
+          chaiExpect(err).to.exist; // eslint-disable-line no-unused-expressions
+          chaiExpect(err).to.be.an.instanceof(CanadaPostClient.CanadaPostError);
+          chaiExpect(err.message).to.be.a.string; // eslint-disable-line no-unused-expressions
+          chaiExpect(err.message).to.include('\n');
+          chaiExpect(err.message).to.include('Contact Phone number is a required field.');
+          chaiExpect(err.message).to.include('At least one line of Customs Description must be supplied.');
+          chaiExpect(err.message).to.include('This product requires a valid value for Non-Delivery Handling.');
+          chaiExpect(err.code).to.include(',');
+          chaiExpect(err.code).to.include('2695');
+          chaiExpect(err.code).to.include('1151');
+          chaiExpect(err.code).to.include('8716');
+          chaiExpect(err.originalMessages).to.be.an('array');
+          chaiExpect(err.originalMessages.length).to.equal(3);
+        }
+      );
   });
 });
