@@ -1,6 +1,6 @@
 # Canada Post API
 
-[![Build Status](https://travis-ci.org/t3rminus/canada-post.svg?branch=master)](https://travis-ci.org/t3rminus/canada-post)
+[![Build Status](https://travis-ci.com/t3rminus/canada-post.svg?branch=master)](https://travis-ci.org/t3rminus/canada-post)
 
 Fairly straightforward wrapper for the Canada Post API. Handles basic rating, creating non-contract shipments, and tracking.
 
