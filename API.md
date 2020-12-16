@@ -21,6 +21,11 @@ _All_ Candada Post API methods return a promise. Old-style callbacks are not sup
     - [`.getRates(scenario)` -> `Promise`](#getratesscenario---promise)
     - [`.createNonContractShipment(shipment)` -> `Promise`](#createNonContractShipmentshipment---promise)
     - [`.refundNonContractShipment(id, email) -> `Promise`](#refundNonContractShipmentid-email---promise))
+    - `.getTrackingDetail(pin, type)` -> Promise
+    - `getShipments(from, to)` -> Promise
+    - `getShipment(id)` -> Promise
+    - `getShipmentDetails(id)` -> Promise
+    
     - *(additional documentation coming soon)*
 
 ## CanadaPostClient
