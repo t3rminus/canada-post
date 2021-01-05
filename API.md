@@ -16,22 +16,23 @@ _All_ Candada Post API methods return a promise. Old-style callbacks are not sup
 
 ## API
 - [CanadaPostClient](#CanadaPostClient)
-    - [`new CanadaPostClient(userId, password, [customer, [lang]])`](#new-canadapostclientuserid-password-customer-lang---canadapostclient)
+    - [`new CanadaPostClient(userId, password, [customer, [lang], [useTestEndpoint]])`](#new-canadapostclientuserid-password-customer-lang-usetestendpoint---canadapostclient)
     - [`.discoverServices(originPostalCode, destinationCountry, [destinationPostalCode])` -> `Promise`](#discoverservicesoriginpostalcode-destinationcountry-destinationpostalcode---promise)
     - [`.getRates(scenario)` -> `Promise`](#getratesscenario---promise)
     - [`.createNonContractShipment(shipment)` -> `Promise`](#createNonContractShipmentshipment---promise)
     - [`.refundNonContractShipment(id, email) -> `Promise`](#refundNonContractShipmentid-email---promise))
-    - `.getTrackingDetail(pin, type)` -> Promise
-    - `getShipments(from, to)` -> Promise
-    - `getShipment(id)` -> Promise
-    - `getShipmentDetails(id)` -> Promise
-    
+    - [`.getTrackingSummary(pin, type)` -> `Promise`](#gettrackingsummarypin-type---promise)
+    - [`.getTrackingDetail(pin, type)` -> `Promise`](#gettrackingdetailpin-type---promise)
+    - [`.getShipments(from, to)` -> `Promise`](#getshipmentsfrom-to---promise)
+    - [`.getShipment(id)` -> `Promise`](#getshipmentid---promise)
+    - [`.getShipmentDetails(id)` -> `Promise`](#getshipmentdetailsid---promise)
+
     - *(additional documentation coming soon)*
 
 ## CanadaPostClient
 The main class for working with the Canada Post API
 
-##### `new CanadaPostClient(userId, password, [customer, [lang]])` -> `CanadaPostClient`
+##### `new CanadaPostClient(userId, password, [customer, [lang, [useTestEndpoint]]])` -> `CanadaPostClient`
 Creates a new instance of the CanadaPostClient class, that will authenticate requests with the provided username and password.
 
 Arguments:
@@ -40,6 +41,7 @@ Arguments:
 - `password` (String) - Your [password](https://www.canadapost.ca/cpotools/apps/drc/registered?execution=e3s1)
 - `customer` (String) [optional] - Your customer ID. This will be used by default for requests, if one is required in the path.
 - `lang` (String) [optional] - The language of the responses. Should be one of en-CA, or fr-CA.
+- `useTestEndpoint` (Boolean) [optional] - Whether to force the use of the "test endpoint" for development purposes. If `true` the test endpoint will be used. If `false` the live endpoint will be used. If omitted, NODE_ENV will be checked. If NODE_ENV is set to "production", the live endpoint will be used, otherwise the test endpoint will be used.
 
 Example:
 ```javascript
@@ -154,3 +156,99 @@ Returns: `Promise`
 Resolves: `Object` - An object with a serviceTicketDate, and serviceTicketId to indicate your refund request has been recieved. You can use the serviceTicketId when communicating with Canada Post
 
 Note that refunds take a few days to process, and a successful response here does not indicate the refund has completed.
+
+***
+
+##### `.getTrackingDetail(pin, type)` -> `Promise`
+Gets tracking information about a particular shipment
+
+See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/tracking/trackingdetails.jsf
+
+Arguments:
+- `pin` (String) - The PIN (Parcel Identification Number/Tracking Number) or Delivery Notice Card (DNC) number.
+- `type` (String) [optional] - The type of tracking number provided, either "pin" or "dnc". Defaults to "pin".
+
+Returns: `Promise`
+Resolves: `Object` - An object with the tracking information, including expectedDeliveryDate, and an array of significantEvents.
+
+***
+
+##### `.getShipments(from, to)` -> `Promise`
+Gets a list of shipments in a particular date range
+
+See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/onestepshipping/onestepshipments.jsf
+
+Arguments:
+- `from` (Date) - The start (older) date
+- `to` (Date) [optional] - The end (more recent) date. Defaults to current date.
+
+Returns: `Promise`
+Resolves: `Array` - An array of objects, which include shipmentId, that were recorded on that date range.
+
+Note that due to a Canada Post limitation, time zone information is discarded, and all dates/times are assumed to be Eastern time zone.
+
+***
+
+##### `.getShipment(id)` -> `Promise`
+Gets basic information about a shipment.
+
+See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/onestepshipping/onestepshipment.jsf
+
+Arguments:
+- `id` (String) - The id of the shipment to look up
+
+Returns: `Promise`
+Resolves: `Object` - An object that includes shipmentId, trackingPin, and links to receipt and shippingLabel.
+
+***
+
+##### `.getShipmentDetails(id)` -> `Promise`
+Gets detailed information about a shipment.
+
+See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/onestepshipping/shipmentdetails.jsf
+
+Arguments:
+- `id` (String) - The id of the shipment to look up
+
+Returns: `Promise`
+Resolves: `Object` - An object that includes detailed shipping information.
+
+Example:
+
+- `nonContractShipmentDetails` (Object) - An object that represents shipment details. Common fields include the following:
+  - `finalShippingPoint` (String) - The final postal code for delivery
+  - `trackingPin` (String) - The tracking pin for the shipment
+  - `refundRequestInfo` (Object) - Details on the shipment's refund status
+    - `serviceTicketId` (String) - The ticket ID of the refund request
+    - `serviceTicketDate` (String) - The date of the refund request
+  - `deliverySpec` (Object) - The specifications of the delivery
+    - `serviceCode` (String) - The code to use (e.g. DOM.EP, USA.XP)
+    - `sender` (Object) - The sender's address information
+      - `name` (String)
+      - `company` (String)
+      - `contactPhone` (String)
+      - `addressDetails` (Object)
+        - `addressLine1` (String)
+        - `addressLine2` (String)
+        - `city` (String)
+        - `provState` (String)
+        - `postalZipCode` (String)
+    - `destination` (Object) - The recipient's address information
+      - `name` (String)
+      - `company` (String)
+      - `clientVoiceNumber` (String)
+      - `addressDetails` (Object)
+        - `addressLine1` (String)
+        - `addressLine2` (String)
+        - `city` (String)
+        - `provState` (String)
+        - `postalZipCode` (String)
+        - `countryCode` (String)
+    - `parcelCharacteristics` (Object) - An object that describes the parcel
+      - `weight` (Number) - The weight of the parcel in kilograms
+      - `dimensions` (Object) - The dimensions of the parcel.
+        - `length` (Number) - Longest dimension in centimeters, to one decimal point
+        - `width` (Number) - Second longest dimension in centimeters, to one decimal point
+        - `height` (Number) - Shortest dimension in centimeters, to one decimal point
+    - `preferences` (Object) - Your shipment preferences
+      - `showPackingInstructions` (String) - true/false for whether to show packing instructions on the generated shipping label
