@@ -159,6 +159,20 @@ Note that refunds take a few days to process, and a successful response here doe
 
 ***
 
+##### `.getTrackingSummary(pin, type)` -> `Promise`
+Gets basic tracking information about a particular shipment
+
+See: https://www.canadapost.ca/cpo/mc/business/productsservices/developers/services/tracking/trackingdetails.jsf
+
+Arguments:
+- `pin` (String) - The PIN (Parcel Identification Number/Tracking Number) or Delivery Notice Card (DNC) number.
+- `type` (String) [optional] - The type of tracking number provided, either "pin" or "dnc". Defaults to "pin".
+
+Returns: `Promise`
+Resolves: `Object` - An object with the tracking information, including expectedDeliveryDate, and the most recent shipping event.
+
+***
+
 ##### `.getTrackingDetail(pin, type)` -> `Promise`
 Gets tracking information about a particular shipment
 
