@@ -12,6 +12,19 @@ export declare namespace CanadaPost {
     serviceName: string;
   }
 
+  export interface PriceDetails {
+    /** Base price before adjustments */
+    base: string;
+    /** Array of applicable taxes */
+    taxes: unknown[];
+    /** Array of price adjustments */
+    adjustments: unknown[];
+    /** Array of optional services and their costs */
+    options: unknown[];
+    /** Final amount due */
+    due: string;
+  }
+
   /**
    * Represents a price quote for a shipping service
    */
@@ -21,18 +34,7 @@ export declare namespace CanadaPost {
     /** The human-readable name of the service */
     serviceName: string;
     /** Detailed breakdown of the price quote */
-    priceDetails: {
-      /** Base price before adjustments */
-      base: string;
-      /** Array of applicable taxes */
-      taxes: unknown[];
-      /** Array of price adjustments */
-      adjustments: unknown[];
-      /** Array of optional services and their costs */
-      options: unknown[];
-      /** Final amount due */
-      due: string;
-    };
+    priceDetails: PriceDetails;
   }
 
   /**
@@ -89,14 +91,21 @@ export declare namespace CanadaPost {
     summary: string;
   }
 
+  export interface DeliveryOption {
+    /** The human-readable name of the delivery option */
+    description: string;
+    /** The code identifying the delivery option */
+    option: string;
+  }
+
   /**
    * Detailed tracking information
    */
   export interface TrackingDetail {
     /** Available delivery options */
-    deliveryOptions?: Array<{ option: string; description: string }>;
+    deliveryOptions?: DeliveryOption[];
     /** Significant tracking events */
-    significantEvents?: Array<any>;
+    significantEvents?: Array<unknown>;
   }
 
   /**
