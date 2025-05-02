@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "description": "A more complete Canada Post API library",
   "main": "lib/canadapost.js",
+  "types": "index.d.ts",
   "scripts": {
     "lint": "semistandard",
     "test": "npm run lint && ./node_modules/.bin/mocha --timeout 60000 ./test"
